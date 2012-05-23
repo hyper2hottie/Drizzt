@@ -3,5 +3,8 @@
 
     <string name="hello">Hello World, DrizztActivity!</string>
     <string name="app_name">Drizzt</string>
+    <string name="createActivity">Create New Activity</string>
+    <string name="newActivityString">This is a new activity</string>
+    <string name="newActivity">New Activity</string>
 
 </resources>

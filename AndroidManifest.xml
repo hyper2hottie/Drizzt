@@ -18,6 +18,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity 
+            android:name="realms.drizzt.newactivity.NewActivity"
+            android:label="@string/newActivity" >
+            	
+        </activity>
     </application>
 
 </manifest>
