@@ -1,6 +1,7 @@
 package realms.drizzt.mainactivity;
 
 import realms.drizzt.newactivity.NewActivity;
+import realms.drizzt.mainactivity.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
