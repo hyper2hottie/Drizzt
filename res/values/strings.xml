@@ -6,5 +6,8 @@
     <string name="createActivity">Create New Activity</string>
     <string name="newActivityString">This is a new activity</string>
     <string name="newActivity">New Activity</string>
+    <string name="FragmentActivity">Fragment Activity</string>
+    <string name="fragment">This is a fragment activity.</string>
+    <string name="createFragmentActivity">Create Fragment Activity</string>
 
 </resources>

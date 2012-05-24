@@ -23,6 +23,11 @@
             android:label="@string/newActivity" >
             	
         </activity>
+        <activity 
+            android:name="realms.drizzt.fragmentactivity.FragmentActivity"
+            android:label="@string/FragmentActivity" >
+            	
+        </activity>
     </application>
 
 </manifest>

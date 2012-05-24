@@ -9,5 +9,11 @@
     	android:layout_height="wrap_content"
     	android:text="@string/newActivityString"
         />
+    <Button 
+        android:id="@+id/activityCreation"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/createActivity"
+        android:onClick="createActivity"/>
 
 </LinearLayout>

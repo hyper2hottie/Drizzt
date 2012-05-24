@@ -8,6 +8,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/hello" />
+    
     <Button 
         android:id="@+id/activityCreation"
         android:layout_width="fill_parent"
@@ -15,4 +16,10 @@
         android:text="@string/createActivity"
         android:onClick="createActivity"/>
 
+    <Button 
+        android:id="@+id/fragmentActivityCreation"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/createFragmentActivity"
+        android:onClick="createFragmentActivity"/>
 </LinearLayout>
