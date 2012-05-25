@@ -3,16 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:id="@+id/layout" >
-    
- 	<TextView
+    android:background="#abcdef"
+    android:id="@+id/testFragmentLayout"
+    >
+        
+    <TextView 
+        android:id="@+id/textView"
+        android:text="This is a fragment."
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/fragment" />
- 	<fragment
- 	    android:name="realms.drizzt.fragmentactivity.TestFragment"
- 	    android:id="@+id/xmlFragment"
- 	    android:layout_width="fill_parent"
     	android:layout_height="wrap_content"
- 	    /> 
+        />
+
 </LinearLayout>
