@@ -14,23 +14,28 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int activityCreation=0x7f050002;
-        public static final int fragmentActivityCreation=0x7f050003;
-        public static final int layout=0x7f050000;
-        public static final int testFragmentLayout=0x7f050004;
-        public static final int textView=0x7f050005;
-        public static final int xmlFragment=0x7f050001;
+        public static final int activityCreation=0x7f050003;
+        public static final int circle=0x7f050000;
+        public static final int circleActivityCreation=0x7f050005;
+        public static final int fragmentActivityCreation=0x7f050004;
+        public static final int layout=0x7f050001;
+        public static final int testFragmentLayout=0x7f050006;
+        public static final int textView=0x7f050007;
+        public static final int xmlFragment=0x7f050002;
     }
     public static final class layout {
-        public static final int fragment_activity=0x7f030000;
-        public static final int main=0x7f030001;
-        public static final int new_activity=0x7f030002;
-        public static final int test_fragment=0x7f030003;
+        public static final int circle_activity=0x7f030000;
+        public static final int fragment_activity=0x7f030001;
+        public static final int main=0x7f030002;
+        public static final int new_activity=0x7f030003;
+        public static final int test_fragment=0x7f030004;
     }
     public static final class string {
+        public static final int CircleActivity=0x7f040009;
         public static final int FragmentActivity=0x7f040005;
         public static final int app_name=0x7f040001;
         public static final int createActivity=0x7f040002;
+        public static final int createCircleActivity=0x7f040008;
         public static final int createFragmentActivity=0x7f040007;
         public static final int fragment=0x7f040006;
         public static final int hello=0x7f040000;

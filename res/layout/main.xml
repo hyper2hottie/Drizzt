@@ -22,4 +22,11 @@
         android:layout_height="wrap_content"
         android:text="@string/createFragmentActivity"
         android:onClick="createFragmentActivity"/>
+    
+    <Button 
+        android:id="@+id/circleActivityCreation"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/createCircleActivity"
+        android:onClick="createCircleActivity"/>
 </LinearLayout>

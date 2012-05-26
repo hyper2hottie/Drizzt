@@ -9,5 +9,6 @@
     <string name="FragmentActivity">Fragment Activity</string>
     <string name="fragment">This is a fragment activity.</string>
     <string name="createFragmentActivity">Create Fragment Activity</string>
-
+    <string name="createCircleActivity">Create Circle Activity</string>
+	<string name="CircleActivity">Circle Activity</string>
 </resources>

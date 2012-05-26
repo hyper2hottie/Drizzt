@@ -28,6 +28,11 @@
             android:label="@string/FragmentActivity" >
             	
         </activity>
+         <activity 
+            android:name="realms.drizzt.drawcircle.CircleActivity"
+            android:label="@string/CircleActivity" >
+            	
+        </activity>
     </application>
 
 </manifest>
