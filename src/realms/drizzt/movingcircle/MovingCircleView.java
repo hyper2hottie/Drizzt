@@ -319,7 +319,6 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 		int x = (int) event.getX();
 		int y = (int) event.getY();
 		thread.setCircleLocation(x, y);
-		
-		return super.onTouchEvent(event);
+		return true;
 	}
 }
