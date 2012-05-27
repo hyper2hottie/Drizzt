@@ -29,4 +29,11 @@
         android:layout_height="wrap_content"
         android:text="@string/createCircleActivity"
         android:onClick="createCircleActivity"/>
+    
+     <Button 
+        android:id="@+id/movingCircleActivityCreation"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/createMovingCircleActivity"
+        android:onClick="createMovingCircleActivity"/>
 </LinearLayout>

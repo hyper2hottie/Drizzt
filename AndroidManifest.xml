@@ -30,8 +30,13 @@
         </activity>
          <activity 
             android:name="realms.drizzt.drawcircle.CircleActivity"
-            android:label="@string/CircleActivity" >
-            	
+            android:label="@string/CircleActivity"
+            android:theme="@android:style/Theme.Black.NoTitleBar" >
+        </activity>
+        <activity 
+            android:name="realms.drizzt.movingcircle.MovingCircleActivity"
+            android:label="@string/MovingCircle"
+            android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
     </application>
 

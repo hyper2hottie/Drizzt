@@ -2,6 +2,7 @@ package realms.drizzt.mainactivity;
 
 import realms.drizzt.drawcircle.CircleActivity;
 import realms.drizzt.fragmentactivity.FragmentActivity;
+import realms.drizzt.movingcircle.MovingCircleActivity;
 import realms.drizzt.newactivity.NewActivity;
 import android.app.Activity;
 import android.content.Intent;
@@ -43,6 +44,16 @@ public class DrizztActivity extends Activity {
     public void createCircleActivity(View view)
     {
     	Intent newActivityIntent = new Intent(this, CircleActivity.class);
+    	startActivity(newActivityIntent);
+    }
+    
+    /**
+     * This is called by a button to create a new activity with a fragment in it.
+     * The activity it creates contains a movable drawn circle
+     */
+    public void createMovingCircleActivity(View view)
+    {
+    	Intent newActivityIntent = new Intent(this, MovingCircleActivity.class);
     	startActivity(newActivityIntent);
     }
 }

@@ -1,4 +1,5 @@
-	package realms.drizzt.drawcircle;
+package realms.drizzt.movingcircle;
+
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -8,48 +9,69 @@ import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-public class CircleView extends SurfaceView implements SurfaceHolder.Callback 
-{
-	class CircleThread extends Thread
+public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callback {
+	public class MovingCircleThread extends Thread
 	{
 		/*
-		 * Constants
+		 * CONSTANTS
 		 */
-		/** Pixel width of circle */
-		private static final int circleWidth = 50;
+		/** Width of the circle in pixels */
+		public static final int CIRCLE_WIDTH = 50;
+		
+		/** Color of the circle */
+		public static final int CIRCLE_COLOR = 0xffff0000;
 		
 		/** Animation states */
-		private static final int MODE_RUNNING = 0;
-		private static final int MODE_PAUSED = 1;
-				
-		/* 
-		 * Member (state) fields
+		public static final int STATE_RUNNING = 1;
+		public static final int STATE_PAUSED = 2;
+		
+		/*
+		 * State fields
 		 */
-				
-		/** Current height of the canvas. */
+		/** Height of the canvas */
 		private int canvasHeight = 1;
 		
-		/** Current width of the canvas. */
-		private int canvasWidth= 1;
+		/** Width of the canvas */
+		private int canvasWidth = 1;
 		
-		/** What to draw. */
+		/** Center of canvas */
+		private int cX;
+		private int cY;
+		
+		/** The circle to draw */
 		private ShapeDrawable circle;
 		
-		/** Current animation state */
-		private int mode;
+		/** Location of circle */
+		private int X;
+		private int Y;
 		
-		/** Handle to the surface manager object to interact with */
+		/** Circle direction and velocity */
+		private int vX;
+		private int vY;
+				
+		/** Current animation state */
+		private int state;
+		
+		/** Hanlder to the surface holder */
 		private SurfaceHolder surfaceHolder;
 		
-		public CircleThread(SurfaceHolder surfaceHolder)
+		
+		/** 
+		 * Constructs the thread
+		 * 
+		 * @param surfaceHolder - The surface holder we interact with for drawing on.
+		 */
+		public MovingCircleThread(SurfaceHolder surfaceHolder)
 		{
-			//important handles
+			//Set the handle to the surface holder
 			this.surfaceHolder = surfaceHolder;
 			
-			//Get drawables
-			circle = new ShapeDrawable(new OvalShape());
-			circle.getPaint().setColor(0xffff0000);
+			//Create the circle
+			circle = new ShapeDrawable(new OvalShape());			
+			circle.getPaint().setColor(CIRCLE_COLOR);
 			
+			vX = 1;
+			vY = 1;
 		}
 		
 		/**
@@ -57,29 +79,30 @@ public class CircleView extends SurfaceView implements SurfaceHolder.Callback
 		 */
 		public void doStart()
 		{
-			setState(MODE_RUNNING);
+			setState(STATE_RUNNING);
 		}
 		
 		/**
-		 * Pause animating.
+		 * Pause animating
 		 */
 		public void pause()
 		{
 			synchronized (surfaceHolder) {
-				if(mode == MODE_RUNNING) setState(MODE_PAUSED);
-			}
+				if(state == STATE_RUNNING) setState(STATE_PAUSED);
+			}			
 		}
 		
 		@Override
 		public void run()
 		{
-			while(mode == MODE_RUNNING)
+			while(state == STATE_RUNNING)
 			{
 				Canvas c = null;
 				try
 				{
 					c = surfaceHolder.lockCanvas(null);
 					synchronized (surfaceHolder) {
+						updateCircle();
 						doDraw(c);
 					}
 				}
@@ -99,13 +122,14 @@ public class CircleView extends SurfaceView implements SurfaceHolder.Callback
 				canvasHeight = height;
 				canvasWidth = width;
 				
+				cX = X = canvasWidth/2;
+				cY = Y = canvasHeight/2;
+				
 				//Set location of circle to be middle
-				int left = canvasWidth/2 - circleWidth/2;
-				int top = canvasHeight/2 - circleWidth/2;
-				circle.setBounds(left, top, left + circleWidth, top + circleWidth);
-				//circle.setBounds(400, 200, 450, 250);
-				circle.setIntrinsicHeight(circleWidth);
-				circle.setIntrinsicWidth(circleWidth);
+				int left = canvasWidth/2 - CIRCLE_WIDTH/2;
+				int top = canvasHeight/2 + CIRCLE_WIDTH/2;
+				circle.setBounds(left, top, left + CIRCLE_WIDTH, top + CIRCLE_WIDTH);
+
 			}
 		}
 		
@@ -114,15 +138,15 @@ public class CircleView extends SurfaceView implements SurfaceHolder.Callback
 		 */
 		public void unpause()
 		{
-			setState(MODE_RUNNING);
+			setState(STATE_RUNNING);
 		}
 		
 		/**
-		 * Sets the state of animations.
+		 * Set the current state of animation
 		 */
 		private void setState(int state)
 		{
-			mode = state;
+			this.state = state;
 		}
 		
 		/**
@@ -133,31 +157,51 @@ public class CircleView extends SurfaceView implements SurfaceHolder.Callback
 			//Black out background
 			canvas.drawColor(0xff000000);
 			
-			//circle.setBounds(200, 200, 250, 250);
 			//Draw the circle
 			circle.draw(canvas);
+		}
+		
+		/**
+		 * Updates the location of the circle.
+		 */
+		private void updateCircle()
+		{
+			circle.getPaint().setColor(CIRCLE_COLOR);
 			
+			//Move the circle
+			if(X > (cX + 100))
+				vX = -1;
+			else if(X < (cX - 100))
+				vX = 1;
+			
+			if(Y > (cY + 100))
+				vY = -1;
+			else if(Y < (cY - 100))
+				vY = 1;
+			
+			X += vX*2;
+			Y += vY*2;
+			//Set location of circle to be middle
+			int left = X - CIRCLE_WIDTH/2;
+			int top = Y - CIRCLE_WIDTH/2;
+			circle.setBounds(left, top, left + CIRCLE_WIDTH, top + CIRCLE_WIDTH);
 		}
 	}
 	
 	/** The thread that animates the circle */
-	private CircleThread thread;	
+	private MovingCircleThread thread;	
 	
 	/** 
 	 * Return the circle thread 
 	 * 
 	 * @return the animation thread
 	 */
-	public CircleThread getThread()
+	public MovingCircleThread getThread()
 	{
 		return thread;
-	}	
+	}
 	
-	/**
-	 * Public constructor
-	 */
-	public CircleView(Context context, AttributeSet attrs)
-	{
+	public MovingCircleView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		
 		//register that we want to head changes to our surface
@@ -165,11 +209,10 @@ public class CircleView extends SurfaceView implements SurfaceHolder.Callback
 		holder.addCallback(this);
 		
 		//create thread, it is started in surfaceCreated()
-		thread = new CircleThread(holder);
+		thread = new MovingCircleThread(holder);
 		
 		setFocusable(true);
 	}
-	
 	
 	/**
      * Standard window-focus override. Notice focus lost so we can pause on
@@ -180,37 +223,33 @@ public class CircleView extends SurfaceView implements SurfaceHolder.Callback
         if (!hasWindowFocus) thread.pause();
     }
 
-    
 	@Override
-	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) 
-	{
+	public void surfaceChanged(SurfaceHolder holder, int format, int width,	int height) {
 		thread.setSurfaceSize(width, height);
+		
 	}
 
 	@Override
-	public void surfaceCreated(SurfaceHolder holder) 
-	{
+	public void surfaceCreated(SurfaceHolder holder) {
 		// start the thread here so that we don't busy-wait in run()
         // waiting for the surface to be created
-        thread.setState(thread.MODE_RUNNING);
+        thread.setState(thread.STATE_RUNNING);
         thread.start();
+		
 	}
 
 	@Override
-	public void surfaceDestroyed(SurfaceHolder holder) 
-	{
+	public void surfaceDestroyed(SurfaceHolder holder) {
 		// we have to tell thread to shut down & wait for it to finish, or else
         // it might touch the Surface after we return and explode
         boolean retry = true;
-        thread.setState(thread.MODE_PAUSED);
+        thread.setState(thread.STATE_PAUSED);
         while (retry) {
             try {
                 thread.join();
                 retry = false;
             } catch (InterruptedException e) {
             }
-        }
-
-	}
-
+        }		
+	}	
 }
