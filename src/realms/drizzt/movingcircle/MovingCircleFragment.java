@@ -51,7 +51,7 @@ public class MovingCircleFragment extends Fragment {
     	if(d)
 			Log.d("MovingCircleFragment", "Entered onPause");
     	super.onPause();
-    	circleView.getThread().pause();
+    	
     	
     }
     
@@ -65,5 +65,28 @@ public class MovingCircleFragment extends Fragment {
 			Log.d("MovingCircleFragment", "Entered onResume");
     	super.onResume();
     	circleView.getThread().unpause();
-    }    
+    		
+    }   
+    
+    /**
+     * Invoked when fragment is destroyed.
+     */
+    @Override
+    public void onDestroy()
+    {
+    	//Release the thread lock so it can quit
+    	circleView.getThread().setState(MovingCircleThread.STATE_STOPPING);
+    	synchronized (circleView.getThread()) {
+    		circleView.getThread().notifyAll();
+		}
+    	boolean retry = true;
+        circleView.getThread().setRunning(false);
+        while (retry) {
+            try {
+            	circleView.getThread().join();
+                retry = false;
+            } catch (InterruptedException e) {
+            }
+        }		
+    }
 }

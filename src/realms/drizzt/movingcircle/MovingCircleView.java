@@ -25,6 +25,8 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 		/** Animation states */
 		public static final int STATE_RUNNING = 1;
 		public static final int STATE_PAUSED = 2;
+		public static final int STATE_WAITING = 3;
+		public static final int STATE_STOPPING = 4;
 		
 		/*
 		 * State fields
@@ -96,11 +98,30 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 			}			
 		}
 		
+		/**
+		 * Get the thread to wait.
+		 * @throws InterruptedException 
+		 */
+		public void waitThread()
+		{
+			synchronized (this) {
+				try {
+					this.wait();
+				} catch (InterruptedException e) {
+					
+				}
+			}
+		}
+		
 		@Override
 		public void run()
 		{
 			while(isRunning)
-			{
+			{		
+				if(state == STATE_WAITING)
+					waitThread();
+				if(state == STATE_STOPPING)
+					return;
 				Canvas c = null;
 				try
 				{
@@ -160,7 +181,7 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 		/**
 		 * Set the current state of animation
 		 */
-		private void setState(int state)
+		public void setState(int state)
 		{
 			this.state = state;
 		}
@@ -229,6 +250,7 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 	/** The thread that animates the circle */
 	private MovingCircleThread thread;	
 	
+	Context context;
 	/** 
 	 * Return the circle thread 
 	 * 
@@ -241,7 +263,7 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 	
 	public MovingCircleView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		
+		this.context = context;
 		//register that we want to head changes to our surface
 		SurfaceHolder holder = getHolder();
 		holder.addCallback(this);
@@ -273,23 +295,22 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 		// start the thread here so that we don't busy-wait in run()
         // waiting for the surface to be created
         thread.setRunning(true);
-        thread.start();
+        if(!thread.isAlive())
+        	thread.start();
+        else
+        {
+        	synchronized (thread) {
+        		thread.notifyAll();
+			}
+        }
 		
 	}
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		// we have to tell thread to shut down & wait for it to finish, or else
-        // it might touch the Surface after we return and explode
-        boolean retry = true;
-        thread.setRunning(false);
-        while (retry) {
-            try {
-                thread.join();
-                retry = false;
-            } catch (InterruptedException e) {
-            }
-        }		
+		// we have to tell thread to wait until it is resumed
+        thread.setState(thread.STATE_WAITING);
+		
 	}	
 	
 	@Override
