@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -102,7 +103,8 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 				{
 					c = surfaceHolder.lockCanvas(null);
 					synchronized (surfaceHolder) {
-						updateCircle();
+						//updateCircle();
+						updateCircleLocation();
 						doDraw(c);
 					}
 				}
@@ -186,6 +188,28 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 			int top = Y - CIRCLE_WIDTH/2;
 			circle.setBounds(left, top, left + CIRCLE_WIDTH, top + CIRCLE_WIDTH);
 		}
+		
+		/**
+		 * Update circle location.
+		 */
+		private void updateCircleLocation()
+		{
+			//Set location of circle to be middle
+			int left = X - CIRCLE_WIDTH/2;
+			int top = Y - CIRCLE_WIDTH/2;
+			circle.setBounds(left, top, left + CIRCLE_WIDTH, top + CIRCLE_WIDTH);
+		}
+		
+		/**
+		 * Change the current location of the circle.
+		 */
+		public void setCircleLocation(int x, int y)
+		{
+			synchronized (surfaceHolder) {
+				X = x;
+				Y = y;
+			}
+		}
 	}
 	
 	/** The thread that animates the circle */
@@ -252,4 +276,14 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
             }
         }		
 	}	
+	
+	@Override
+	public boolean onTouchEvent(MotionEvent event)
+	{
+		int x = (int) event.getX();
+		int y = (int) event.getY();
+		thread.setCircleLocation(x, y);
+		
+		return super.onTouchEvent(event);
+	}
 }
