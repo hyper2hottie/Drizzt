@@ -53,6 +53,9 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 		/** Current animation state */
 		private int state;
 		
+		/** Is thread runing */
+		private boolean isRunning = false;
+		
 		/** Hanlder to the surface holder */
 		private SurfaceHolder surfaceHolder;
 		
@@ -96,7 +99,7 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 		@Override
 		public void run()
 		{
-			while(state == STATE_RUNNING)
+			while(isRunning)
 			{
 				Canvas c = null;
 				try
@@ -104,7 +107,7 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 					c = surfaceHolder.lockCanvas(null);
 					synchronized (surfaceHolder) {
 						//updateCircle();
-						updateCircleLocation();
+						if (state == STATE_RUNNING) updateCircleLocation();
 						doDraw(c);
 					}
 				}
@@ -141,6 +144,17 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 		public void unpause()
 		{
 			setState(STATE_RUNNING);
+		}
+		
+		/**
+		 * Used to signal the thread to run or not.
+		 * True lets it run, false will shut down the thread.
+		 * 
+		 * @param run - true to run, false to shut down
+		 */
+		public void setRunning(boolean run)
+		{
+			isRunning = run;
 		}
 		
 		/**
@@ -245,6 +259,7 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
     @Override
     public void onWindowFocusChanged(boolean hasWindowFocus) {
         if (!hasWindowFocus) thread.pause();
+        else thread.unpause();
     }
 
 	@Override
@@ -257,7 +272,7 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 	public void surfaceCreated(SurfaceHolder holder) {
 		// start the thread here so that we don't busy-wait in run()
         // waiting for the surface to be created
-        thread.setState(thread.STATE_RUNNING);
+        thread.setRunning(true);
         thread.start();
 		
 	}
@@ -267,7 +282,7 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 		// we have to tell thread to shut down & wait for it to finish, or else
         // it might touch the Surface after we return and explode
         boolean retry = true;
-        thread.setState(thread.STATE_PAUSED);
+        thread.setRunning(false);
         while (retry) {
             try {
                 thread.join();
