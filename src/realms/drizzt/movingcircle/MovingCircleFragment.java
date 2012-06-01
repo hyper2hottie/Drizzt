@@ -74,6 +74,7 @@ public class MovingCircleFragment extends Fragment {
     @Override
     public void onDestroy()
     {
+    	super.onDestroy();
     	//Release the thread lock so it can quit
     	circleView.getThread().setState(MovingCircleThread.STATE_STOPPING);
     	synchronized (circleView.getThread()) {
