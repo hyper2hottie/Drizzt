@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.util.AttributeSet;
+import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -118,10 +119,14 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 		{
 			while(isRunning)
 			{		
+				//For stopping the thread during a pause
 				if(state == STATE_WAITING)
 					waitThread();
+				//This is used for destroying the thread
 				if(state == STATE_STOPPING)
 					return;
+				
+				//Update and draw the circle
 				Canvas c = null;
 				try
 				{
@@ -225,7 +230,8 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 		}
 		
 		/**
-		 * Update circle location.
+		 * Update circle location.  Sets the circle objects location based
+		 * on the location stored in the thread.
 		 */
 		private void updateCircleLocation()
 		{
@@ -236,7 +242,9 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 		}
 		
 		/**
-		 * Change the current location of the circle.
+		 * Change the current location of the circle.  These changes only
+		 * affect the draw location if the thread is running and updateCircleLocation()
+		 * is being called.
 		 */
 		public void setCircleLocation(int x, int y)
 		{
@@ -244,6 +252,22 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 				X = x;
 				Y = y;
 			}
+		}
+		
+		/**
+		 * Get circle offset.  Used to get the offset from center of the screen
+		 * Note: Towards the right of the screen is a positive x offset and towards 
+		 * the top is a positive y offset.
+		 * @return offset of drawn circle in format [x,y] from center of screen
+		 */
+		public Pair<Integer, Integer> getCircleOffset()
+		{
+			int tempX = X;
+			int tempY = Y;
+			int tempcX = cX;
+			int tempcY = cY;
+			
+			return new Pair<Integer, Integer>(tempX-tempcX, tempcY - tempY);
 		}
 	}
 	

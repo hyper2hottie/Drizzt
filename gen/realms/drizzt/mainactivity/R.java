@@ -21,9 +21,10 @@ public final class R {
         public static final int layout=0x7f050002;
         public static final int movingCircle=0x7f050001;
         public static final int movingCircleActivityCreation=0x7f050007;
-        public static final int movingCircleFragment=0x7f050008;
-        public static final int testFragmentLayout=0x7f050009;
-        public static final int textView=0x7f05000a;
+        public static final int movingCircleFragment=0x7f050009;
+        public static final int movingCircleTextView=0x7f050008;
+        public static final int testFragmentLayout=0x7f05000a;
+        public static final int textView=0x7f05000b;
         public static final int xmlFragment=0x7f050003;
     }
     public static final class layout {
@@ -37,6 +38,7 @@ public final class R {
     }
     public static final class string {
         public static final int CircleActivity=0x7f040009;
+        public static final int CircleOffset=0x7f04000c;
         public static final int FragmentActivity=0x7f040005;
         public static final int MovingCircle=0x7f04000a;
         public static final int app_name=0x7f040001;

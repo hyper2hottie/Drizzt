@@ -4,11 +4,19 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
     
+    <TextView
+ 	    android:text="@string/CircleOffset"
+ 	    android:id="@+id/movingCircleTextView"
+ 	    android:layout_width="match_parent"
+    	android:layout_height="wrap_content" 
+ 	    />
+    
     <fragment
  	    android:name="realms.drizzt.movingcircle.MovingCircleFragment"
  	    android:id="@+id/movingCircleFragment"
  	    android:layout_width="match_parent"
-    	android:layout_height="match_parent"
+    	android:layout_height="fill_parent"
  	    /> 
+ 	
 
 </LinearLayout>

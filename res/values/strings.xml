@@ -13,4 +13,5 @@
 	<string name="CircleActivity">Circle Activity</string>
 	<string name="MovingCircle">Moving Circle Activity</string>
     <string name="createMovingCircleActivity">Create Moving Circle Activity</string>
+    <string name="CircleOffset">Circle Offset</string>
 </resources>

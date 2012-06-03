@@ -5,6 +5,7 @@ import realms.drizzt.movingcircle.MovingCircleView.MovingCircleThread;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,8 @@ public class MovingCircleFragment extends Fragment {
         super.onCreate(savedInstanceState);        
         
     }
+    
+    //---------------------ACTIVITY LIFECYCLE----------------------------------
     
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -90,4 +93,27 @@ public class MovingCircleFragment extends Fragment {
             }
         }		
     }
+    
+    //------------------------------------------------------------------------------
+    
+    
+    
+    //------------------------CIRCLE MANAGEMENT-------------------------------------
+    
+    /**
+	 * Get circle offset.  Used to get the offset from center of the screen
+	 * Note: Towards the right of the screen is a positive x offset and towards 
+	 * the top is a positive y offset.
+	 * @return offset of drawn circle in format [x,y] from center of screen
+	 */
+    public Pair<Integer, Integer> getCircleOffset()
+    {
+    	if(circleThread != null)
+    		return circleThread.getCircleOffset();
+    	else
+    		return null;
+    }
+    
+    
+    //------------------------------------------------------------------------------
 }
