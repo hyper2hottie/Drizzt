@@ -114,6 +114,24 @@ public class MovingCircleFragment extends Fragment {
     		return null;
     }
     
+    /**
+	 * This function is used for adding a listener.  All listeners will
+	 * be called whenever the circles location changes
+	 * @param listener - the object that wants calls from this circle
+	 */
+	public void registerListener(MovingCircleListener listener)
+	{
+		circleView.registerListener(listener);
+	}
+	
+	/**
+	 * This function removes a listener.
+	 * @param listener - the object that no longer wants to recieve updates
+	 */
+	public void unregisterListener(MovingCircleListener listener)
+	{
+		circleView.unregisterListener(listener);
+	}
     
     //------------------------------------------------------------------------------
 }

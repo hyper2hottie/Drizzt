@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.util.Pair;
 import android.widget.TextView;
 
-public class MovingCircleActivity extends Activity {
+public class MovingCircleActivity extends Activity implements MovingCircleListener {
 
 	/** A task that sets the circle offset textbox */
 	TimerTask circleTask;
@@ -52,6 +52,10 @@ public class MovingCircleActivity extends Activity {
 			}
 		};    
     	circleTimer.schedule(circleTask, 0, 20);
+    	
+    	//Register this as a listener to the MovingCircleView
+    	MovingCircleFragment fragment = (MovingCircleFragment)getFragmentManager().findFragmentById(R.id.movingCircleFragment);
+    	fragment.registerListener(this);
     }
     
     /** Called when losing focus */
@@ -64,5 +68,26 @@ public class MovingCircleActivity extends Activity {
     	circleTask.cancel();
     	circleTimer = null;    	
     	circleTask = null;
+    	
+    	//unregister this as a listener to the MovingCircleView
+    	MovingCircleFragment fragment = (MovingCircleFragment)getFragmentManager().findFragmentById(R.id.movingCircleFragment);
+    	fragment.unregisterListener(this);
     }
+
+	
+    /**
+     * When the circle moves then we want to change
+     * the value in the text box.
+     */
+    @Override
+	public void onCircleMoved(final int X, final int Y) {
+    	runOnUiThread(new Runnable()
+		{
+			@Override
+			public void run() {
+				((TextView)findViewById(R.id.movingCircleTextViewInterface)).setText(X + ", " + Y);
+			}
+			
+		});
+	}
 }

@@ -10,6 +10,12 @@
  	    android:layout_width="match_parent"
     	android:layout_height="wrap_content" 
  	    />
+     <TextView
+ 	    android:text="@string/CircleOffset"
+ 	    android:id="@+id/movingCircleTextViewInterface"
+ 	    android:layout_width="match_parent"
+    	android:layout_height="wrap_content" 
+ 	    />
     
     <fragment
  	    android:name="realms.drizzt.movingcircle.MovingCircleFragment"

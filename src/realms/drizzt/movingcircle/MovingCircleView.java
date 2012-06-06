@@ -1,6 +1,8 @@
 package realms.drizzt.movingcircle;
 
 
+import java.util.LinkedList;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.ShapeDrawable;
@@ -61,8 +63,7 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 		
 		/** Hanlder to the surface holder */
 		private SurfaceHolder surfaceHolder;
-		
-		
+				
 		/** 
 		 * Constructs the thread
 		 * 
@@ -238,6 +239,11 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 			//Set location of circle to be middle
 			int left = X - CIRCLE_WIDTH/2;
 			int top = Y - CIRCLE_WIDTH/2;
+			if(circle.getBounds().left != left || circle.getBounds().top != top)
+			{
+				Pair<Integer, Integer> offset =  getCircleOffset();
+				callListeners(offset.first, offset.second);
+			}
 			circle.setBounds(left, top, left + CIRCLE_WIDTH, top + CIRCLE_WIDTH);
 		}
 		
@@ -275,6 +281,11 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 	private MovingCircleThread thread;	
 	
 	Context context;
+	
+
+	/** Listeners */
+	private LinkedList<MovingCircleListener> listeners;
+	
 	/** 
 	 * Return the circle thread 
 	 * 
@@ -294,6 +305,9 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 		
 		//create thread, it is started in surfaceCreated()
 		thread = new MovingCircleThread(holder);
+		
+		//create the listeners list
+		listeners = new LinkedList<MovingCircleListener>();
 		
 		setFocusable(true);
 	}
@@ -337,6 +351,42 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 		
 	}	
 	
+	/**
+	 * This function is used for adding a listener.  All listeners will
+	 * be called whenever the circles location changes
+	 * @param listener - the object that wants calls from this circle
+	 */
+	public void registerListener(MovingCircleListener listener)
+	{
+		if(!listeners.contains(listener))
+			listeners.add(listener);
+	}
+	
+	/**
+	 * This function removes a listener.
+	 * @param listener - the object that no longer wants to recieve updates
+	 */
+	public void unregisterListener(MovingCircleListener listener)
+	{
+		if(listeners.contains(listener))
+			listeners.remove(listener);
+	}
+	
+	/**
+	 * Call all of the listeners with the new circle location.
+	 */
+	private void callListeners(int X, int Y)
+	{
+		for(MovingCircleListener listener : listeners)
+		{
+			listener.onCircleMoved(X, Y);
+		}
+	}
+	
+	/**
+	 * Whenever someone makes a touch to this view the onTouchEvent
+	 * is called.  It updates the location of the circle.
+	 */
 	@Override
 	public boolean onTouchEvent(MotionEvent event)
 	{
