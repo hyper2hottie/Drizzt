@@ -51,6 +51,12 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 		private int X;
 		private int Y;
 		
+		/** Radius of movement. */
+		private int radius;
+		
+		/** Boolean to decide to change the circle offset or not */
+		private boolean updateOffset;
+		
 		/** Circle direction and velocity */
 		private int vX;
 		private int vY;
@@ -71,6 +77,9 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 		 */
 		public MovingCircleThread(SurfaceHolder surfaceHolder)
 		{
+			//Initially assume no touch events
+			updateOffset = true;
+			
 			//Set the handle to the surface holder
 			this.surfaceHolder = surfaceHolder;
 			
@@ -127,13 +136,17 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 				if(state == STATE_STOPPING)
 					return;
 				
+				//Change offset if necessary
+				if(updateOffset)
+					decreaseOffset();
+				
 				//Update and draw the circle
 				Canvas c = null;
 				try
 				{
 					c = surfaceHolder.lockCanvas(null);
 					synchronized (surfaceHolder) {
-						//updateCircle();
+						//updateCircle();						
 						if (state == STATE_RUNNING) updateCircleLocation();
 						doDraw(c);
 					}
@@ -161,6 +174,12 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 				int left = canvasWidth/2 - CIRCLE_WIDTH/2;
 				int top = canvasHeight/2 + CIRCLE_WIDTH/2;
 				circle.setBounds(left, top, left + CIRCLE_WIDTH, top + CIRCLE_WIDTH);
+				
+				//Set the radius of motion
+				radius = 255;
+				radius = (radius > (Math.min(canvasHeight, canvasWidth)/2)) ? Math.min(canvasHeight, canvasWidth) / 2: radius;
+				if(radius < 0)
+					radius = 0;
 
 			}
 		}
@@ -254,10 +273,49 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 		 */
 		public void setCircleLocation(int x, int y)
 		{
-			synchronized (surfaceHolder) {
-				X = x;
-				Y = y;
+			double finalX = x - cX;
+			double finalY = y - cY;
+			if((finalX*finalX + finalY*finalY) > radius * radius)
+			{
+				double tempX = finalX;
+				double tempY = finalY;
+				
+				//Slope of the line
+				double m = tempY/tempX;
+				
+				//Compute the absolute value of x
+				double absX = Math.sqrt((radius * radius)/(m*m + 1));
+				finalX = (tempX < 0) ? absX * -1 : absX;
+				finalY = m * finalX;				
+				
 			}
+			synchronized (surfaceHolder) {
+				X = ((int) finalX + cX);
+				Y = ((int) finalY + cY);
+			}
+		}
+		
+		/**
+		 * Decrease offset.
+		 * Moves the circle in towards the center.  Used 
+		 * to auto-center the circle.
+		 */
+		private void decreaseOffset()
+		{
+			int tempX = X;
+			int tempY = Y;
+			
+			int offsetX = tempX - cX;
+			int offsetY = cY - tempY;
+			
+			if(offsetX != 0)
+				offsetX = (offsetX > 0) ? offsetX - 1: offsetX + 1;
+			
+			if(offsetY != 0)
+				offsetY = (offsetY > 0) ? offsetY - 1: offsetY + 1;
+			
+			X = offsetX + cX;
+			Y = cY - offsetY;
 		}
 		
 		/**
@@ -390,6 +448,10 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 	@Override
 	public boolean onTouchEvent(MotionEvent event)
 	{
+		if(event.getAction() == MotionEvent.ACTION_DOWN)
+			thread.updateOffset = false;
+		else if(event.getAction() == MotionEvent.ACTION_UP)
+			thread.updateOffset = true;
 		int x = (int) event.getX();
 		int y = (int) event.getY();
 		thread.setCircleLocation(x, y);
