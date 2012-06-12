@@ -302,20 +302,50 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 		 */
 		private void decreaseOffset()
 		{
-			int tempX = X;
-			int tempY = Y;
+			//Get the current x and y values
+			int curX = X - cX;
+			int curY = cY - Y;
 			
-			int offsetX = tempX - cX;
-			int offsetY = cY - tempY;
+			//Current radius
+			double curR = Math.sqrt(curX*curX + curY * curY);
 			
-			if(offsetX != 0)
-				offsetX = (offsetX > 0) ? offsetX - 1: offsetX + 1;
+			//The rate at which the cirle auto centers
+			int rate = 0;
+						
+			//When more than two thirds out, decrease radius by 3 each run through
+			if(curR > radius * 9/10)
+				rate = 7;
+			else if(curR > radius * 8/10)
+				rate = 6;
+			else if(curR > radius * 7/10)
+				rate = 5;
+			else if(curR > radius * 5/10)
+				rate = 4;
+			else if(curR > radius * 3/10)
+				rate = 3;
+			else if(curR > radius * 2/10) //rate of 2
+				rate = 2;
+			else if(curR > 0.000000000000001) //rate of 0
+				rate = 1;
+			else
+				rate = 0;
 			
-			if(offsetY != 0)
-				offsetY = (offsetY > 0) ? offsetY - 1: offsetY + 1;
+			//Slope of line
+			double m = ((double)curY)/((double)curX);
 			
-			X = offsetX + cX;
-			Y = cY - offsetY;
+			//New radius
+			double newR = curR - rate;
+			
+			//X value for the circle
+			double finalX = Math.sqrt((newR * newR)/(m * m + 1));
+			finalX = (curX < 1) ? finalX * -1: finalX;
+			
+			//Y value for circle
+			double finalY = m * finalX;
+			
+			//Set values for the circle
+			X = (int) (Math.round(finalX) + cX);
+			Y = (int) (cY - Math.round(finalY));
 		}
 		
 		/**
