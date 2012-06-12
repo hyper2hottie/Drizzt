@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.util.AttributeSet;
@@ -44,8 +45,11 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 		private int cX;
 		private int cY;
 		
-		/** The circle to draw */
+		/** The moving circle to draw */
 		private ShapeDrawable circle;
+		
+		/** The boundary circle to draw, indicates edge of range. */
+		private ShapeDrawable boundaryCircle;
 		
 		/** Location of circle */
 		private int X;
@@ -86,6 +90,10 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 			//Create the circle
 			circle = new ShapeDrawable(new OvalShape());			
 			circle.getPaint().setColor(CIRCLE_COLOR);
+			
+			//Create a circle for the boundary
+			boundaryCircle = new ShapeDrawable(new OvalShape());
+			boundaryCircle.getPaint().setColor(0xFF0000FF);
 			
 			vX = 1;
 			vY = 1;
@@ -181,6 +189,8 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 				if(radius < 0)
 					radius = 0;
 
+				//Set the boundary circle based on radius 
+				boundaryCircle.setBounds(cX - radius, cY - radius, cX + radius, cY + radius);
 			}
 		}
 		
@@ -218,6 +228,9 @@ public class MovingCircleView extends SurfaceView implements SurfaceHolder.Callb
 		{
 			//Black out background
 			canvas.drawColor(0xff000000);
+			
+			//Draw boundary circle
+			boundaryCircle.draw(canvas);
 			
 			//Draw the circle
 			circle.draw(canvas);
