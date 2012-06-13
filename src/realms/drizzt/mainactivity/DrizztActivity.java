@@ -1,5 +1,6 @@
 package realms.drizzt.mainactivity;
 
+import realms.drizzt.bluetoothactivity.BluetoothActivity;
 import realms.drizzt.drawcircle.CircleActivity;
 import realms.drizzt.fragmentactivity.FragmentActivity;
 import realms.drizzt.movingcircle.MovingCircleActivity;
@@ -54,6 +55,16 @@ public class DrizztActivity extends Activity {
     public void createMovingCircleActivity(View view)
     {
     	Intent newActivityIntent = new Intent(this, MovingCircleActivity.class);
+    	startActivity(newActivityIntent);
+    }
+    
+    /**
+     * This is called by a button to create a new activity that
+     * tests a class running bluetooth.
+     */
+    public void createBluetoothActivity(View view)
+    {
+    	Intent newActivityIntent = new Intent(this, BluetoothActivity.class);
     	startActivity(newActivityIntent);
     }
 }

@@ -38,6 +38,10 @@
             android:label="@string/MovingCircle"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
+        <activity 
+            android:name="realms.drizzt.bluetoothactivity.BluetoothActivity"
+            android:label="@string/BluetoothActivity">                        
+        </activity>
     </application>
 
 </manifest>
