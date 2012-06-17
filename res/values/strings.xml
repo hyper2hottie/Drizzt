@@ -16,4 +16,5 @@
     <string name="CircleOffset">Circle Offset</string>
     <string name="BluetoothActivity">Bluetooth Activity</string>
     <string name="CreateBluetoothActivity">Create Bluetooth Activity</string>
+    <string name="bluetoothNotAvailable">Bluetooth Not Available</string>
 </resources>

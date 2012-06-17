@@ -48,6 +48,7 @@ public final class R {
         public static final int FragmentActivity=0x7f040005;
         public static final int MovingCircle=0x7f04000a;
         public static final int app_name=0x7f040001;
+        public static final int bluetoothNotAvailable=0x7f04000f;
         public static final int createActivity=0x7f040002;
         public static final int createCircleActivity=0x7f040008;
         public static final int createFragmentActivity=0x7f040007;
