@@ -14,6 +14,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 /** This class is used to create a connection over
@@ -26,33 +30,60 @@ public class BluetoothClass {
 	private static final UUID SerialPortServiceClass_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 	
 	/** The adapter on the phone, allows us to actually use bluetooth */
-	private BluetoothAdapter mBluetoothAdapter;
-	
+	private BluetoothAdapter mBluetoothAdapter = null;	
 	/** Name of the device to connect to*/
-	private String mRemoteDeviceName;
-	
+	private String mRemoteDeviceName = null;	
 	/** Device that is found and connected to */
-	private BluetoothDevice mBluetoothDevice;
+	private BluetoothDevice mBluetoothDevice = null;
+	/** State of auto-connect or manual connect */
+	boolean autoConnect = true;
+	/** Array adapter for manual connect */
+	private ArrayAdapter<String> mArrayAdapter = null;
 	
+	//Codes
 	/** Code for enabling bluetooth */
 	private static final int REQUEST_ENABLE_BT = 1;
 	
+	//Message codes
+	/** Code for connection complete */
+	public static final int MESSAGE_CONNECTION_COMPLETE = 1;
+	/** Code for the name of the currently connected device */
+	public static final int MESSAGE_DEVICE_NAME = 2;
+	/** Code indicating that a connection has been lost */
+	public static final int MESSAGE_CONNECTION_COMPLETE_LOST = 3;
+	/** Code indicating connection failure */
+	public static final int MESSAGE_ERROR_CONNECTING = 4;
+	
+	//Bundle keys
+	/** Code for a bundle key, name of the device */
+	public static final String BUNDLE_DEVICE_NAME = "deviceName";
+	
+	//Handles
 	/** The activity that contains this class */
-	private Activity parentActivity;
-	
+	private Activity parentActivity = null;	
 	/** Threads for running/creating connections */
-	private ConnectThread mConnectThread;
-	private ConnectedThread mConnectedThread;
+	private ConnectThread mConnectThread = null;
+	private ConnectedThread mConnectedThread = null;
+	/** Message handler for messages to the UI */
+	private Handler mHandler = null;
 	
+	//----------------------------------General--------------------------------------------
 	/** 
 	 * Constructor.
 	 */
-	public BluetoothClass(Activity a)
+	public BluetoothClass(Activity a, Handler h)
 	{
 		if(a == null)
 			throw new IllegalArgumentException("The parent activity can not be null.");
 		else
 			parentActivity = a;
+		
+		if(h == null)
+			throw new IllegalArgumentException("The handler can not be null.");
+		else
+			mHandler = h;
+		
+		autoConnect = true;
 	}
 	
 	/**
@@ -65,6 +96,31 @@ public class BluetoothClass {
 		else
 			return true;
 	}
+	
+	/**
+	 * Cancel all threads.
+	 */
+	public void cancel()
+	{
+		//Make sure that discovery is cancelled
+		mBluetoothAdapter.cancelDiscovery();
+		
+		//Cancel the thread creating a connection
+		if(mConnectThread != null)
+		{
+			mConnectThread.cancel();
+			mConnectThread = null;
+		}
+		
+		//Cancel any thread currently running a connection
+		if(mConnectedThread != null)
+		{
+			mConnectedThread.cancel();
+			mConnectedThread = null;
+		}
+	}
+	
+	//-------------------------------------------------------------------------------------
 	
 	//----------------------------------Configuration--------------------------------------
 	
@@ -95,9 +151,30 @@ public class BluetoothClass {
 	//-----------------------------------Creating a Connection-----------------------------
 	
 	/**
+	 * Create a connection manually, by filling an array adapter.
+	 * 
+	 * @param adapter - An adapter that will be filled with devices to connect to.
+	 */
+	public void manuallConnect(ArrayAdapter<String> adapter)
+	{
+		mArrayAdapter = adapter;
+		autoConnect = false;
+		createConnection();
+	}
+	
+	/**
+	 * Create a connection automatically
+	 */
+	public void autoConnect()
+	{
+		autoConnect = true;
+		createConnection();
+	}
+	
+	/**
 	 * Creates a connection.  This will handle everything, including enabling bluetooth.
 	 */
-	public void createConnection()
+	protected void createConnection()
 	{
 		//Try get adapter for bluetooth
 		if(mBluetoothAdapter == null)
@@ -145,18 +222,26 @@ public class BluetoothClass {
 			if(action.equals(BluetoothDevice.ACTION_FOUND))
 			{
 				BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-				if(device.getName().equals(mRemoteDeviceName))
+				if(autoConnect == true && device.getName().equals(mRemoteDeviceName))
 				{
 					mBluetoothAdapter.cancelDiscovery();
 					connect(device);
 					parentActivity.unregisterReceiver(mAutoConnectReciever);
+				} else if(autoConnect == false)
+				{
+					//Fill adapter
+					mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
 				}
 			}
 			else if(action.equals(BluetoothAdapter.ACTION_DISCOVERY_FINISHED))
 			{
 				mBluetoothAdapter.cancelDiscovery();
 				parentActivity.unregisterReceiver(mAutoConnectReciever);
-				//TODO: Error message
+				cancel();
+				
+				//Send error message to UI
+				Message msg = mHandler.obtainMessage(BluetoothClass.MESSAGE_ERROR_CONNECTING);
+				mHandler.sendMessage(msg);
 			}
 		}
 	};
@@ -169,24 +254,25 @@ public class BluetoothClass {
 	 */
 	protected void connect(BluetoothDevice device)
 	{
-		if(mConnectThread != null)
-		{
-			mConnectThread.cancel();
-			mConnectThread = null;
-		}
-		
-		if(mConnectedThread != null)
-		{
-			mConnectedThread.cancel();
-			mConnectedThread = null;
-		}
+		cancel();
 		
 		mConnectThread = new ConnectThread(device);
 		mConnectThread.start();
 	}
 	
 	/**
-	 * This thread attempts to conenct to the input device.  It
+	 * Connect to the device with the input mac address.
+	 * 
+	 * @param macAddress - The address of the device to connect to.
+	 */
+	protected void connect(String macAddress)
+	{
+		connect(mBluetoothAdapter.getRemoteDevice(macAddress));
+	}
+	
+	
+	/**
+	 * This thread attempts to connect to the input device.  It
 	 * will run until a connection succeeds or the thread is cancelled.
 	 */
 	private class ConnectThread extends Thread{
@@ -283,6 +369,17 @@ public class BluetoothClass {
 	   //Start the thread to manage the connection
 	   mConnectedThread = new ConnectedThread(socket);
 	   mConnectedThread.start();
+	   
+	   //Let the UI know we are connected
+	   Message msg = mHandler.obtainMessage(BluetoothClass.MESSAGE_CONNECTION_COMPLETE);
+	   mHandler.sendMessage(msg);
+	   
+	   //Send teh name of the connected device
+	   Message deviceNameMsg = mHandler.obtainMessage(BluetoothClass.MESSAGE_DEVICE_NAME);
+	   Bundle deviceNameBundle = new Bundle();
+	   deviceNameBundle.putCharSequence(BluetoothClass.BUNDLE_DEVICE_NAME, device.getName());
+	   deviceNameMsg.setData(deviceNameBundle);
+	   mHandler.sendMessage(deviceNameMsg);
 	}
 	
    /**
@@ -328,7 +425,8 @@ public class BluetoothClass {
 			   }
 			   catch(IOException e)
 			   {
-				   break;
+				   //Notify UI, cancel thread
+				   connectionLost();
 			   }
 		   }
 	   }
@@ -365,6 +463,16 @@ public class BluetoothClass {
    public void write(char out)
    {
 	   mConnectedThread.write(out);
+   }
+   
+   /**
+    * Connection lost.  Sends a message to the UI and closes the running threads.
+    */
+   private void connectionLost()
+   {
+	   cancel();
+	   Message msg = mHandler.obtainMessage(BluetoothClass.MESSAGE_CONNECTION_COMPLETE_LOST);
+	   mHandler.sendMessage(msg);
    }
    
    //-------------------------------------------------------------------------------------
