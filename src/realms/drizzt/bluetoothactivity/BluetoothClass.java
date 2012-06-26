@@ -36,7 +36,7 @@ public class BluetoothClass {
 	/** Device that is found and connected to */
 	private BluetoothDevice mBluetoothDevice = null;
 	/** State of auto-connect or manual connect */
-	boolean autoConnect = true;
+	boolean doAutoConnect = true;
 	/** Array adapter for manual connect */
 	private ArrayAdapter<String> mArrayAdapter = null;
 	
@@ -50,7 +50,7 @@ public class BluetoothClass {
 	/** Code for the name of the currently connected device */
 	public static final int MESSAGE_DEVICE_NAME = 2;
 	/** Code indicating that a connection has been lost */
-	public static final int MESSAGE_CONNECTION_COMPLETE_LOST = 3;
+	public static final int MESSAGE_CONNECTION_LOST = 3;
 	/** Code indicating connection failure */
 	public static final int MESSAGE_ERROR_CONNECTING = 4;
 	
@@ -70,6 +70,9 @@ public class BluetoothClass {
 	//----------------------------------General--------------------------------------------
 	/** 
 	 * Constructor.
+	 * @param a - The activity that is calling using the class
+	 * @param h - A message handler, this will be called when the state of this 
+	 * 			  object changes and affects the activity
 	 */
 	public BluetoothClass(Activity a, Handler h)
 	{
@@ -83,7 +86,7 @@ public class BluetoothClass {
 		else
 			mHandler = h;
 		
-		autoConnect = true;
+		doAutoConnect = true;
 	}
 	
 	/**
@@ -158,7 +161,7 @@ public class BluetoothClass {
 	public void manuallConnect(ArrayAdapter<String> adapter)
 	{
 		mArrayAdapter = adapter;
-		autoConnect = false;
+		doAutoConnect = false;
 		createConnection();
 	}
 	
@@ -167,7 +170,7 @@ public class BluetoothClass {
 	 */
 	public void autoConnect()
 	{
-		autoConnect = true;
+		doAutoConnect = true;
 		createConnection();
 	}
 	
@@ -222,12 +225,12 @@ public class BluetoothClass {
 			if(action.equals(BluetoothDevice.ACTION_FOUND))
 			{
 				BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-				if(autoConnect == true && device.getName().equals(mRemoteDeviceName))
+				if(doAutoConnect == true && device.getName().equals(mRemoteDeviceName))
 				{
 					mBluetoothAdapter.cancelDiscovery();
 					connect(device);
 					parentActivity.unregisterReceiver(mAutoConnectReciever);
-				} else if(autoConnect == false)
+				} else if(doAutoConnect == false)
 				{
 					//Fill adapter
 					mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
@@ -471,9 +474,19 @@ public class BluetoothClass {
    private void connectionLost()
    {
 	   cancel();
-	   Message msg = mHandler.obtainMessage(BluetoothClass.MESSAGE_CONNECTION_COMPLETE_LOST);
+	   Message msg = mHandler.obtainMessage(BluetoothClass.MESSAGE_CONNECTION_LOST);
 	   mHandler.sendMessage(msg);
    }
    
+   /**
+    * Is the device currently running a connection.
+    * @return - True if the there is a connection running.
+    */
+   public boolean isConnected()
+   {
+	   if(mConnectedThread != null)
+		   return true;
+	   return false;
+   }
    //-------------------------------------------------------------------------------------
 }

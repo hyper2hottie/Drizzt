@@ -5,9 +5,21 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/bluetoothText1"
+        android:id="@+id/device"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Blutooth Text 1" />
+        android:text="Device" />
+    
+    <Button 
+        android:id="@+id/onButton"
+        android:onClick="onButtonClick"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"/>
+    
+	<Button 
+        android:id="@+id/offButton"
+        android:onClick="offButtonClick"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>
