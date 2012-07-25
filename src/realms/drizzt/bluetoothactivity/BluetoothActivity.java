@@ -157,10 +157,10 @@ public class BluetoothActivity extends Activity {
 		@Override
 		public void handleMessage(Message msg)
 		{
-			Bundle data = msg.getData();
-			for(String key : data.keySet())
-			{
-				switch(Integer.parseInt(key))
+			//Bundle data = msg.getData();
+			//for(String key : data.keySet())
+			//{
+				switch(msg.what)
 				{
 				case BluetoothClass.MESSAGE_CONNECTION_COMPLETE:
 					if(mDialog != null)
@@ -185,7 +185,7 @@ public class BluetoothActivity extends Activity {
 					mDialog = null;
 					break;
 				}
-			}
+			//}
 						
 		}
 	};
@@ -206,5 +206,15 @@ public class BluetoothActivity extends Activity {
 		}
 	}
 	
+	/**
+	 * Connect to bluetooth.
+	 * @param view - The calling view
+	 */
+	public void connect(View view)
+	{
+		displayConnectingDialog();
+		mBluetooth.setDeviceName("robot-AAC2");
+		mBluetooth.autoConnect();
+	}
 	//---------------------------------------------------------------------------------
 }

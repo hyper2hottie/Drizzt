@@ -13,12 +13,21 @@
     <Button 
         android:id="@+id/onButton"
         android:onClick="onButtonClick"
+        android:text="On"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"/>
     
 	<Button 
         android:id="@+id/offButton"
         android:onClick="offButtonClick"
+        android:text="Off"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"/>
+	
+	<Button 
+        android:id="@+id/connectButton"
+        android:onClick="connect"
+        android:text="Connect"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"/>
 

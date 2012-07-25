@@ -32,7 +32,7 @@ public class BluetoothClass {
 	/** The adapter on the phone, allows us to actually use bluetooth */
 	private BluetoothAdapter mBluetoothAdapter = null;	
 	/** Name of the device to connect to*/
-	private String mRemoteDeviceName = null;	
+	private String mRemoteDeviceName = "robot";	
 	/** Device that is found and connected to */
 	private BluetoothDevice mBluetoothDevice = null;
 	/** State of auto-connect or manual connect */
@@ -358,7 +358,8 @@ public class BluetoothClass {
 	   	//Cancel the thread that completed the connection
 	   if(mConnectThread != null)
 	   {
-		   mConnectThread.cancel();
+		   //Do not call cancel because it closes the socket.
+		   //mConnectThread.cancel();
 		   mConnectThread = null;
 	   }
 	   
@@ -377,7 +378,7 @@ public class BluetoothClass {
 	   Message msg = mHandler.obtainMessage(BluetoothClass.MESSAGE_CONNECTION_COMPLETE);
 	   mHandler.sendMessage(msg);
 	   
-	   //Send teh name of the connected device
+	   //Send the name of the connected device
 	   Message deviceNameMsg = mHandler.obtainMessage(BluetoothClass.MESSAGE_DEVICE_NAME);
 	   Bundle deviceNameBundle = new Bundle();
 	   deviceNameBundle.putCharSequence(BluetoothClass.BUNDLE_DEVICE_NAME, device.getName());
