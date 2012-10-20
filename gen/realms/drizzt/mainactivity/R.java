@@ -24,13 +24,14 @@ public final class R {
         public static final int layout=0x7f050006;
         public static final int movingCircle=0x7f050005;
         public static final int movingCircleActivityCreation=0x7f05000b;
-        public static final int movingCircleFragment=0x7f05000f;
-        public static final int movingCircleTextView=0x7f05000d;
-        public static final int movingCircleTextViewInterface=0x7f05000e;
+        public static final int movingCircleFragment=0x7f050010;
+        public static final int movingCircleTextView=0x7f05000e;
+        public static final int movingCircleTextViewInterface=0x7f05000f;
         public static final int offButton=0x7f050002;
         public static final int onButton=0x7f050001;
-        public static final int testFragmentLayout=0x7f050010;
-        public static final int textView=0x7f050011;
+        public static final int testFragmentLayout=0x7f050011;
+        public static final int textView=0x7f050012;
+        public static final int usbActivityCreation=0x7f05000d;
         public static final int xmlFragment=0x7f050007;
     }
     public static final class layout {
@@ -42,14 +43,17 @@ public final class R {
         public static final int moving_circle_activity=0x7f030005;
         public static final int new_activity=0x7f030006;
         public static final int test_fragment=0x7f030007;
+        public static final int usb_activity=0x7f030008;
     }
     public static final class string {
         public static final int BluetoothActivity=0x7f04000d;
         public static final int CircleActivity=0x7f040009;
         public static final int CircleOffset=0x7f04000c;
         public static final int CreateBluetoothActivity=0x7f04000e;
+        public static final int CreateUsbActivity=0x7f040010;
         public static final int FragmentActivity=0x7f040005;
         public static final int MovingCircle=0x7f04000a;
+        public static final int UsbActivity=0x7f040011;
         public static final int app_name=0x7f040001;
         public static final int bluetoothNotAvailable=0x7f04000f;
         public static final int createActivity=0x7f040002;

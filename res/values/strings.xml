@@ -17,4 +17,6 @@
     <string name="BluetoothActivity">Bluetooth Activity</string>
     <string name="CreateBluetoothActivity">Create Bluetooth Activity</string>
     <string name="bluetoothNotAvailable">Bluetooth Not Available</string>
+    <string name="CreateUsbActivity">Create Usb Activity</string>
+    <string name="UsbActivity">Usb Activity</string>
 </resources>

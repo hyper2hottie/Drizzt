@@ -5,6 +5,7 @@ import realms.drizzt.drawcircle.CircleActivity;
 import realms.drizzt.fragmentactivity.FragmentActivity;
 import realms.drizzt.movingcircle.MovingCircleActivity;
 import realms.drizzt.newactivity.NewActivity;
+import realms.drizzt.usbactivity.UsbActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -65,6 +66,16 @@ public class DrizztActivity extends Activity {
     public void createBluetoothActivity(View view)
     {
     	Intent newActivityIntent = new Intent(this, BluetoothActivity.class);
+    	startActivity(newActivityIntent);
+    }
+    
+    /**
+     * This is called by a button to create a new activity that
+     * tests usb communication with a pc.
+     */
+    public void createUsbActivity(View view)
+    {
+    	Intent newActivityIntent = new Intent(this, UsbActivity.class);
     	startActivity(newActivityIntent);
     }
 }
